@@ -1,0 +1,15 @@
+[project]
+name = "cdc"
+version = "0.1.0"
+description = "Change Data Capture with Data Fabric"
+readme = "README.md"
+authors = [
+    { name = "Erdinc Kaya", email = "erdincka@msn.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "mysql-connector-python>=9.3.0",
+    "pyarrow>=20.0.0",
+    "pyspark>=4.0.0",
+]
