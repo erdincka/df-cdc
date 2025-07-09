@@ -1,96 +1,208 @@
-# Demo CDC Capabilities using Kafka Connect and Debezium
+# End to End CDC using Data Fabric
+
+## Components
+
+- MySQL / MariaDB
+
+- NiFi
+
+- Hive & Zeppelin
+
+- Presto & Superset
 
 
-## ✅ What You Can Achieve with NiFi for CDC
+## Setup DB (MySQL/MariaDB)
 
-NiFi supports **MySQL CDC** via the `Capture Changes MySQL` processor (part of the [**Apache NiFi Extensions**](https://nifi.apache.org/extensions/)). This processor allows you to:
+- Install mysql server.
 
-- **Monitor a MySQL database for changes** (inserts, updates, deletes).
-- **Stream these changes in real-time** without relying on log files or binary logs (though it’s not as performant as using binlog via Debezium).
-- **Route the data to Kafka**, a file system, another database, or any other destination.
+  `apt install mysql`
 
----
 
-## 🛠️ Steps to Build a CDC Pipeline with NiFi
+- Modify /etc/mysql/conf.d/mysqld.cnf to enable binlog:
 
-### 1. **Install and Configure the MySQL CDC Processor**
+  ```ini
+  [mysqld]
+  server_id = 1
+  log_bin = delta
+  binlog_format=row
+  binlog_do_db = demodb
+  ```
 
-- The `Capture Changes MySQL` processor is part of the **Apache NiFi Extensions** project.
-- You need to:
-  - Download the **NiFi Extension NAR** for MySQL CDC.
-  - Install it into your NiFi instance (via `nifi.properties` or through the NiFi UI under *Extensions*).
+- Create database and user:
 
-### 2. **Set Up a Connection to Your MySQL Database**
+  `mysql -u root -p` and provide the root password.
 
-- Use the `Capture Changes MySQL` processor and configure:
-  - **Database URL**: e.g., `jdbc:mysql://localhost:3306/your_database`
-  - **Username and Password**
-  - **Table or Schema** you want to monitor
-  - **Polling Frequency** (how often NiFi checks for changes)
-- Note: This is a **polling-based approach**, which may not be as performant or reliable as using MySQL's binary logs (as Debezium does).
 
-### 3. **Route the Changes to Kafka**
+  ```sql
+  CREATE DATABASE demodb;
 
-- Use the `PutKafka` processor:
-  - Configure it with your Kafka broker details.
-  - Set a **topic name** for the CDC events.
-- This will push all captured changes into Kafka.
+  USE demodb;
 
----
+  CREATE TABLE `users` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `title` text,
+    `first` text,
+    `last` text,
+    `street` text,
+    `city` text,
+    `state` text,
+    `postcode` text,
+    `country` text,
+    `gender` text,
+    `email` text,
+    `uuid` text,
+    `username` text,
+    `password` text,
+    `phone` text,
+    `cell` text,
+    `dob` datetime NULL DEFAULT NULL,
+    `registered` datetime NULL DEFAULT NULL,
+    `large` text,
+    `medium` text,
+    `thumbnail` text,
+    `nat` text,
+    PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
-## 📦 Example NiFi Flow
+  ```
+
+
+### Insert data into MySQL
+
+API call to get a new list of users: https://randomuser.me/api/?results=10&format=csv
+
+or use `python3 users.py --count <number_of_users>`
+
+
+## Setup NiFi
+
+
+- Install NiFi
+
+  `apt install -y mapr-nifi`
+  `/opt/mapr/server/configure.sh -R`
+
+- Download and import [template](./CDC_from_MySQL_v2.xml).
+
+- Edit processors for missing passwords, and change bucket, db names etc.
+
+
+### Install/Enable MySQL CDC Extension for NiFi
+
+- Place connector into: `/opt/mapr/nifi/nifi-1.28.0/extensions`
+
+  `wget -P /opt/mapr/nifi/nifi-1.28.0/extensions https://repo1.maven.org/maven2/org/apache/nifi/nifi-cdc-mysql-nar/1.28.0/nifi-cdc-mysql-nar-1.28.0.nar`
+
+
+### Install MySQL JDBC client
+
+- Download from: `https://dev.mysql.com/downloads/connector/j/`
+
+
+  `wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-9.3.0-1.el8.noarch.rpm`
+
+  or
+
+  `wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j_9.3.0-1ubuntu22.04_all.deb`
+
+  and it should be available in `/usr/share/java/mysql-connector-j-9.3.0.jar`, this location should be updated in the processor configuration in NiFi.
+
+
+## Create Hive Table
+
+
+`hive --service beeline`
+
+`!connect jdbc:hive2://localhost:10000/default;ssl=true;auth=maprsasl`
+
+
+```hiveql
+CREATE TABLE users (
+  id INT,
+  title STRING,
+  first STRING,
+  last STRING,
+  street STRING,
+  city STRING,
+  state STRING,
+  postcode STRING,
+  country STRING,
+  gender STRING,
+  email STRING,
+  uuid STRING,
+  username STRING,
+  password STRING,
+  phone STRING,
+  cell STRING,
+  dob STRING,
+  registered STRING,
+  large STRING,
+  medium STRING,
+  thumbnail STRING,
+  nat STRING
+);
 
 ```
-[Capture Changes MySQL] → [Update Attribute (optional)] → [PutKafka]
-```
 
-- `Capture Changes MySQL`: Captures changes from your MySQL database.
-- `Update Attribute` (optional): For transforming the payload, adding metadata, or routing to multiple topics.
-- `PutKafka`: Sends the change events to a Kafka topic.
+### Zeppelin configuration
 
----
+- Create new context
 
-## 📊 Comparison: NiFi vs. Kafka Connect + Debezium
+  ```ini
+  hive.url = jdbc:hive2://localhost:10000/default;ssl=true;auth=maprsasl
+  hive.user	= mapr	
+  hive.password	= mapr	
+  hive.driver =	org.apache.hive.jdbc.HiveDriver
+  ```
 
-| Feature | **NiFi (with Capture Changes MySQL)** | **Kafka Connect + Debezium** |
-|--------|---------------------------------------|-------------------------------|
-| **CDC Mechanism** | Polls MySQL (less performant)         | Uses MySQL Binlog (high performance) |
-| **Configuration Complexity** | Moderate (visual setup)               | Moderate (REST API or CLI)     |
-| **Tooling & Ecosystem** | Rich UI, low-code approach           | Part of Kafka ecosystem        |
-| **Scalability** | Limited by polling frequency          | Highly scalable with Kafka     |
-| **Transformation Capabilities** | Excellent (NiFi is strong at this)  | Requires external tools       |
-| **Maintenance** | Easier with NiFi UI                  | More complex with REST APIs   |
+- Use [Dashboard](./Dashboard.ipynb) or [Zeppelin Dashboard](./Dashboard_2M1KSJM36.zpln) file to query the Hive table.
 
----
 
-## 🚧 Limitations of NiFi’s CDC Approach
+#### Create S3 bucket
 
-- **Not binlog-based**: It polls for changes, which can be inefficient for high-volume or real-time use cases.
-- **Limited MySQL Compatibility**: Only supports basic DDL and DML operations (no support for full CDC in complex scenarios).
-- **No built-in schema evolution or JSON processing** (like Debezium provides).
+- Create alias
 
----
+  `mc alias set dfhost https://dfhost:9000 myaccesskey mysecretkey`
 
-## 🔄 When to Choose NiFi Over Kafka Connect + Debezium
+- Create bucket
 
-- If you're **already using NiFi** in your stack and want a **self-contained solution**.
-- For **simple data pipelines** where performance isn't a top priority.
-- If you want to **transform, filter, or route data** with rich flow controls before sending to Kafka.
-- In **non-production environments**, for testing or small-scale use.
+  `mc mb dfhost/demobk`
 
----
 
-## 🔄 When to Choose Kafka Connect + Debezium
+### Run NiFi flow
 
-- For **high-throughput, low-latency** CDC (especially with binlog).
-- If you're already using the **Kafka ecosystem** (e.g., Kafka Streams, KSQL).
-- In production environments where **reliability and performance are critical**.
-- When you need **schema-aware change events** and support for **complex queries or filtering**.
 
----
+**Only inserts are replicated in this version.**
 
-## ✅ Summary
+**Other SQL statements are logged with "failure" code.** They could be forwarded to another route, where they will be converted to parquet and put into S3 bucket.
 
-Yes, you can achieve a CDC pipeline using NiFi with the `Capture Changes MySQL` processor. It's a **solid choice for simple, visual pipelines**, but if your use case requires **high performance, binlog-based CDC, or deep integration with Kafka**, then **Kafka Connect + Debezium** is the better option.
 
----
+### Setup Presto
+
+
+- Connection to Hive Metastore (setup file MS as in docs)
+
+  `https://docs.ezmeral.hpe.com/unified-analytics/15/EzPresto/connect-external-s3-data-source.html`
+
+- Setup as shown below:
+
+  ![Hive S3 Connection](./hive-s3-connection.png)
+
+<!-- Create view in the catalog:
+
+```sql
+CREATE VIEW hivemeta.default.users AS
+SELECT *
+FROM dfcore.default.users;
+``` -->
+
+### Setup Superset
+
+- Presto connection: `presto://ezpresto.demo.ez.win.lab:443/s3parquet`
+
+
+Go to Datasets, add dataset `users` and create charts.
+
+<!-- ```sql
+SELECT * FROM s3parquet.default.users
+``` -->

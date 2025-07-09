@@ -38,13 +38,20 @@ admin/admin OR test/test
 
 Administration - Connections - Add connection
 
-jdbc:hive2://vm-10-1-1-20.kayalab.uk:10000/default;ssl=true;auth=maprsasl;sslTrustStore=/root/ssl_truststore;trustStorePassword=7y_8ZMelgqSqxug8goAFJovlS1_v7_ee;user=mapr;password=mapr
+- Copy /opt/mapr/conf/ssl_truststore to the sparkflows container:
+
+    `scp mapr@df-host:/opt/mapr/conf/ssl_truststore /root/`
+
+- Replace the TRUSTSTORE_PWD with actual password from `/opt/mapr/conf/store-passwords.txt` file:
+
+    `jdbc:hive2://10.1.1.20:10000/default;ssl=true;auth=maprsasl;sslTrustStore=/root/ssl_truststore;trustStorePassword=TRUSTSTORE_PWD;user=mapr;password=mapr`
+
 
 ### Mysql connection:
 
-
-cp /usr/share/java/mysql-connector-java-9.3.0.jar /usr/local/fire-3.3.1_spark_3.5.2/fire-server-lib/
+`cp /usr/share/java/mysql-connector-java-9.3.0.jar /usr/local/fire-3.3.1_spark_3.5.2/fire-server-lib/`
 
 Administration - Connections - Add connection
 
-jdbc:mysql://db.kayalab.uk:3306/
+`jdbc:mysql://db-server:3306/`
+

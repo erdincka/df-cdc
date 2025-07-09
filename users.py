@@ -4,12 +4,15 @@ import httpx
 import argparse
 
 parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--server", default="localhost")
+parser.add_argument("-u", "--user", default="root")
+parser.add_argument("-p", "--password", default="Admin123.")
+parser.add_argument("-d", "--database", default="demodb")
 parser.add_argument("-c", "--count", default=2)
 
 args = parser.parse_args()
-count = args.count
 
-URL = f"https://randomuser.me/api/?results={count}&format=json&dl&noinfo"
+URL = f"https://randomuser.me/api/?results={args.count}&format=json&dl&noinfo"
 
 def get_users_from_url():
     res = httpx.get(URL)
@@ -29,7 +32,7 @@ users = get_users_from_url()
 import mysql.connector
 
 mydb = mysql.connector.connect(
-    host="db.kayalab.uk", user="root", password="Admin123.", database="demodb"
+    host=args.server, user=args.user, password=args.password, database=args.database
 )
 
 mycursor = mydb.cursor()

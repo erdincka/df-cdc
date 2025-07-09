@@ -1,0 +1,748 @@
+﻿{
+  "paragraphs": [
+    {
+      "title": "Test DB connection",
+      "text": "%hive(hive)\nSHOW DATABASES;\n\nSELECT * from default.users LIMIT 10;\n",
+      "user": "mapr",
+      "dateUpdated": "2025-07-09T17:06:17+0100",
+      "progress": 0,
+      "config": {
+        "tableHide": true,
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 88,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "database_name": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "id": "string",
+                      "title": "string",
+                      "first": "string",
+                      "last": "string",
+                      "street": "string",
+                      "city": "string",
+                      "state": "string",
+                      "postcode": "string",
+                      "country": "string",
+                      "gender": "string",
+                      "email": "string",
+                      "uuid": "string",
+                      "username": "string",
+                      "password": "string",
+                      "phone": "string",
+                      "cell": "string",
+                      "dob": "string",
+                      "registered": "string",
+                      "large": "string",
+                      "medium": "string",
+                      "thumbnail": "string",
+                      "nat": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "database_name\ndefault\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "id\ttitle\tfirst\tlast\tstreet\tcity\tstate\tpostcode\tcountry\tgender\temail\tuuid\tusername\tpassword\tphone\tcell\tdob\tregistered\tlarge\tmedium\tthumbnail\tnat\n7\tMiss\tKaitlin\tMyers\t6431 Springfield Road\tTruro\tDyfed\tK80 5ZS\tUnited Kingdom\tfemale\tkaitlin.myers@example.com\t8a2bace5-5dba-486d-bf7b-3d97620c28d4\tredduck873\thouston1\t01107 15820\t07806 605604\tMon Mar 07 15:38:55 GMT 1977\tFri Sep 16 05:30:01 BST 2011\thttps://randomuser.me/api/portraits/women/38.jpg\thttps://randomuser.me/api/portraits/med/women/38.jpg\thttps://randomuser.me/api/portraits/thumb/women/38.jpg\tGB\n8\tMr\tHugo\tVela\t4569 Calzada Islas Marshall\tParque Ind. Cienega de Flores\tChiapas\t34660\tMexico\tmale\thugo.vela@example.com\t6e774924-2ef5-49a1-af0b-626ade31691f\tangrypanda448\twomen\t(689) 204 6096\t(654) 810 8145\tTue Apr 15 16:42:36 GMT 1952\tMon Mar 01 07:29:08 GMT 2010\thttps://randomuser.me/api/portraits/men/66.jpg\thttps://randomuser.me/api/portraits/med/men/66.jpg\thttps://randomuser.me/api/portraits/thumb/men/66.jpg\tMX\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1751986737212_701288141",
+      "id": "paragraph_1751986737212_701288141",
+      "dateCreated": "2025-07-08T15:58:57+0100",
+      "dateStarted": "2025-07-09T16:58:47+0100",
+      "dateFinished": "2025-07-09T16:58:47+0100",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:14759"
+    },
+    {
+      "title": "Distribution of users by gender (male vs female)",
+      "text": "%hive(hive)\n\nSELECT gender, COUNT(*) AS count FROM default.users GROUP BY gender;\n\n",
+      "user": "mapr",
+      "dateUpdated": "2025-07-09T19:42:01+0100",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "editorHide": true,
+        "title": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 389,
+              "optionOpen": false
+            }
+          },
+          "1": {
+            "graph": {
+              "mode": "pieChart",
+              "height": 274,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "gender": "string",
+                      "count": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "INFO  : Compiling command(queryId=mapr_20250709194201_10388a29-bc7d-4984-9bda-713e5013bc4d): \n\nSELECT gender, COUNT(*) AS count FROM default.users GROUP BY gender\nINFO  : Concurrency mode is disabled, not creating a lock manager\nINFO  : Semantic Analysis Completed (retrial = false)\nINFO  : Returning Hive schema: Schema(fieldSchemas:[FieldSchema(name:gender, type:string, comment:null), FieldSchema(name:count, type:bigint, comment:null)], properties:null)\nINFO  : Completed compiling command(queryId=mapr_20250709194201_10388a29-bc7d-4984-9bda-713e5013bc4d); Time taken: 0.107 seconds\nINFO  : Concurrency mode is disabled, not creating a lock manager\nINFO  : Executing command(queryId=mapr_20250709194201_10388a29-bc7d-4984-9bda-713e5013bc4d): \n\nSELECT gender, COUNT(*) AS count FROM default.users GROUP BY gender\nWARN  : Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\nINFO  : Query ID = mapr_20250709194201_10388a29-bc7d-4984-9bda-713e5013bc4d\nINFO  : Total jobs = 1\nINFO  : Launching Job 1 out of 1\nINFO  : Starting task [Stage-1:MAPRED] in serial mode\nINFO  : Number of reduce tasks not specified. Estimated from input data size: 1\nINFO  : In order to change the average load for a reducer (in bytes):\nINFO  :   set hive.exec.reducers.bytes.per.reducer=<number>\nINFO  : In order to limit the maximum number of reducers:\nINFO  :   set hive.exec.reducers.max=<number>\nINFO  : In order to set a constant number of reducers:\nINFO  :   set mapreduce.job.reduces=<number>\nINFO  : number of splits:1\nINFO  : Submitting tokens for job: job_1750689279495_0321\nINFO  : Executing with tokens: [Kind: HIVE_DELEGATION_TOKEN, Service: HiveServer2ImpersonationToken, Ident: 00 04 6d 61 70 72 04 6d 61 70 72 04 6d 61 70 72 8a 01 97 f0 73 da b0 8a 01 98 14 80 5e b0 05 01]\nINFO  : The url to track the job: https://vm-10-2-50-36.ez.win.lab:8090/proxy/application_1750689279495_0321/\nINFO  : Starting Job = job_1750689279495_0321, Tracking URL = https://vm-10-2-50-36.ez.win.lab:8090/proxy/application_1750689279495_0321/\nINFO  : Kill Command = /opt/mapr/hadoop/hadoop-3.4.1/bin/mapred job  -kill job_1750689279495_0321\nINFO  : Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1\nINFO  : 2025-07-09 19:42:08,428 Stage-1 map = 0%,  reduce = 0%\nINFO  : 2025-07-09 19:42:13,598 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.96 sec\nINFO  : 2025-07-09 19:42:21,767 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.78 sec\nINFO  : MapReduce Total cumulative CPU time: 3 seconds 780 msec\nINFO  : Ended Job = job_1750689279495_0321\nINFO  : MapReduce Jobs Launched: \nINFO  : Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.78 sec   MAPRFS Read: 0 MAPRFS Write: 0 SUCCESS\nINFO  : Total MapReduce CPU Time Spent: 3 seconds 780 msec\nINFO  : Completed executing command(queryId=mapr_20250709194201_10388a29-bc7d-4984-9bda-713e5013bc4d); Time taken: 21.05 seconds\nINFO  : OK\nINFO  : Concurrency mode is disabled, not creating a lock manager\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "gender\tcount\nfemale\t3\nmale\t1\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "HIVE JOB",
+          "tooltip": "View in YARN WEB UI",
+          "group": "hive",
+          "values": [
+            {
+              "jobUrl": "https://vm-10-2-50-36.ez.win.lab:8090/proxy/application_1750689279495_0321/",
+              "$$hashKey": "object:36191"
+            }
+          ],
+          "interpreterSettingId": "hive"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1752061083449_1750912907",
+      "id": "paragraph_1752061083449_1750912907",
+      "dateCreated": "2025-07-09T12:38:03+0100",
+      "dateStarted": "2025-07-09T19:42:01+0100",
+      "dateFinished": "2025-07-09T19:42:22+0100",
+      "status": "FINISHED",
+      "$$hashKey": "object:14761"
+    },
+    {
+      "text": "%hive(hive)\n\nSELECT country, COUNT(*) AS count FROM default.users GROUP BY country ORDER BY count DESC LIMIT 10;",
+      "user": "mapr",
+      "dateUpdated": "2025-07-09T19:42:36+0100",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 6,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "editorHide": false,
+        "title": true,
+        "results": {
+          "1": {
+            "graph": {
+              "mode": "pieChart",
+              "height": 274,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "country": "string",
+                      "count": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default",
+                  "stacked": true
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "stackedAreaChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "pieChart": {}
+              },
+              "commonSetting": {},
+              "keys": [],
+              "groups": [
+                {
+                  "name": "country",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "values": [
+                {
+                  "name": "count",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "HIVE JOB",
+          "tooltip": "View in YARN WEB UI",
+          "group": "hive",
+          "values": [
+            {
+              "jobUrl": "https://vm-10-2-50-36.ez.win.lab:8090/proxy/application_1750689279495_0322/",
+              "$$hashKey": "object:36835"
+            }
+          ],
+          "interpreterSettingId": "hive"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1752085534664_2001648317",
+      "id": "paragraph_1752085534664_2001648317",
+      "dateCreated": "2025-07-09T19:25:34+0100",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:17421",
+      "dateFinished": "2025-07-09T19:43:12+0100",
+      "dateStarted": "2025-07-09T19:42:36+0100",
+      "title": "Distribution of users by country",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "INFO  : Compiling command(queryId=mapr_20250709194236_76c6771e-1804-4f43-acb2-a0c85603746f): \n\nSELECT country, COUNT(*) AS count FROM default.users GROUP BY country ORDER BY count DESC LIMIT 10\nINFO  : Concurrency mode is disabled, not creating a lock manager\nINFO  : Semantic Analysis Completed (retrial = false)\nINFO  : Returning Hive schema: Schema(fieldSchemas:[FieldSchema(name:country, type:string, comment:null), FieldSchema(name:count, type:bigint, comment:null)], properties:null)\nINFO  : Completed compiling command(queryId=mapr_20250709194236_76c6771e-1804-4f43-acb2-a0c85603746f); Time taken: 0.087 seconds\nINFO  : Concurrency mode is disabled, not creating a lock manager\nINFO  : Executing command(queryId=mapr_20250709194236_76c6771e-1804-4f43-acb2-a0c85603746f): \n\nSELECT country, COUNT(*) AS count FROM default.users GROUP BY country ORDER BY count DESC LIMIT 10\nWARN  : Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\nINFO  : Query ID = mapr_20250709194236_76c6771e-1804-4f43-acb2-a0c85603746f\nINFO  : Total jobs = 2\nINFO  : Launching Job 1 out of 2\nINFO  : Starting task [Stage-1:MAPRED] in serial mode\nINFO  : Number of reduce tasks not specified. Estimated from input data size: 1\nINFO  : In order to change the average load for a reducer (in bytes):\nINFO  :   set hive.exec.reducers.bytes.per.reducer=<number>\nINFO  : In order to limit the maximum number of reducers:\nINFO  :   set hive.exec.reducers.max=<number>\nINFO  : In order to set a constant number of reducers:\nINFO  :   set mapreduce.job.reduces=<number>\nINFO  : number of splits:1\nINFO  : Submitting tokens for job: job_1750689279495_0322\nINFO  : Executing with tokens: [Kind: HIVE_DELEGATION_TOKEN, Service: HiveServer2ImpersonationToken, Ident: 00 04 6d 61 70 72 04 6d 61 70 72 04 6d 61 70 72 8a 01 97 f0 73 da b0 8a 01 98 14 80 5e b0 05 01]\nINFO  : The url to track the job: https://vm-10-2-50-36.ez.win.lab:8090/proxy/application_1750689279495_0322/\nINFO  : Starting Job = job_1750689279495_0322, Tracking URL = https://vm-10-2-50-36.ez.win.lab:8090/proxy/application_1750689279495_0322/\nINFO  : Kill Command = /opt/mapr/hadoop/hadoop-3.4.1/bin/mapred job  -kill job_1750689279495_0322\nINFO  : Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1\nINFO  : 2025-07-09 19:42:43,093 Stage-1 map = 0%,  reduce = 0%\nINFO  : 2025-07-09 19:42:47,191 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.46 sec\nINFO  : 2025-07-09 19:42:51,281 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.03 sec\nINFO  : MapReduce Total cumulative CPU time: 3 seconds 30 msec\nINFO  : Ended Job = job_1750689279495_0322\nINFO  : Launching Job 2 out of 2\nINFO  : Starting task [Stage-2:MAPRED] in serial mode\nINFO  : Number of reduce tasks determined at compile time: 1\nINFO  : In order to change the average load for a reducer (in bytes):\nINFO  :   set hive.exec.reducers.bytes.per.reducer=<number>\nINFO  : In order to limit the maximum number of reducers:\nINFO  :   set hive.exec.reducers.max=<number>\nINFO  : In order to set a constant number of reducers:\nINFO  :   set mapreduce.job.reduces=<number>\nINFO  : number of splits:1\nINFO  : Submitting tokens for job: job_1750689279495_0323\nINFO  : Executing with tokens: [Kind: HIVE_DELEGATION_TOKEN, Service: HiveServer2ImpersonationToken, Ident: 00 04 6d 61 70 72 04 6d 61 70 72 04 6d 61 70 72 8a 01 97 f0 73 da b0 8a 01 98 14 80 5e b0 05 01]\nINFO  : The url to track the job: https://vm-10-2-50-36.ez.win.lab:8090/proxy/application_1750689279495_0323/\nINFO  : Starting Job = job_1750689279495_0323, Tracking URL = https://vm-10-2-50-36.ez.win.lab:8090/proxy/application_1750689279495_0323/\nINFO  : Kill Command = /opt/mapr/hadoop/hadoop-3.4.1/bin/mapred job  -kill job_1750689279495_0323\nINFO  : Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1\nINFO  : 2025-07-09 19:42:59,972 Stage-2 map = 0%,  reduce = 0%\nINFO  : 2025-07-09 19:43:06,115 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.17 sec\nINFO  : 2025-07-09 19:43:11,227 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 2.96 sec\nINFO  : MapReduce Total cumulative CPU time: 2 seconds 960 msec\nINFO  : Ended Job = job_1750689279495_0323\nINFO  : MapReduce Jobs Launched: \nINFO  : Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.03 sec   MAPRFS Read: 0 MAPRFS Write: 0 SUCCESS\nINFO  : Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 2.96 sec   MAPRFS Read: 0 MAPRFS Write: 0 SUCCESS\nINFO  : Total MapReduce CPU Time Spent: 5 seconds 990 msec\nINFO  : Completed executing command(queryId=mapr_20250709194236_76c6771e-1804-4f43-acb2-a0c85603746f); Time taken: 35.872 seconds\nINFO  : OK\nINFO  : Concurrency mode is disabled, not creating a lock manager\n"
+          },
+          {
+            "type": "TABLE",
+            "data": "country\tcount\nIran\t2\nAustralia\t1\nMexico\t1\nUnited Kingdom\t1\n"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%hive(hive)\n\nSELECT COUNT(*) as TotalUsers from default.users",
+      "user": "mapr",
+      "dateUpdated": "2025-07-09T19:47:59+0100",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {
+                    "columns": [
+                      {
+                        "name": "id0",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "title1",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "first2",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "last3",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "street4",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "city5",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "state6",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "postcode7",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "country8",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "gender9",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "email10",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "uuid11",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "username12",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "password13",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "phone14",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "cell15",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "dob16",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "registered17",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "large18",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "medium19",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "thumbnail20",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      },
+                      {
+                        "name": "nat21",
+                        "visible": true,
+                        "width": "*",
+                        "sort": {},
+                        "filters": [
+                          {}
+                        ],
+                        "pinned": ""
+                      }
+                    ],
+                    "scrollFocus": {},
+                    "selection": [],
+                    "grouping": {
+                      "grouping": [],
+                      "aggregations": [],
+                      "rowExpandedStates": {}
+                    },
+                    "treeView": {},
+                    "pagination": {
+                      "paginationCurrentPage": 1,
+                      "paginationPageSize": 250
+                    }
+                  },
+                  "tableColumnTypeState": {
+                    "names": {
+                      "totalusers": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "stackedAreaChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "id",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "title",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1752085979158_896119890",
+      "id": "paragraph_1752085979158_896119890",
+      "dateCreated": "2025-07-09T19:32:59+0100",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:18975",
+      "dateFinished": "2025-07-09T19:47:59+0100",
+      "dateStarted": "2025-07-09T19:47:59+0100",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "totalusers\n16\n"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%hive\n",
+      "user": "mapr",
+      "dateUpdated": "2025-07-09T19:35:19+0100",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1752086119424_1192269026",
+      "id": "paragraph_1752086119424_1192269026",
+      "dateCreated": "2025-07-09T19:35:19+0100",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:19718"
+    }
+  ],
+  "name": "Dashboard",
+  "id": "2M1KSJM36",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.10.1.200-eep-940",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": true,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/Dashboard"
+}
