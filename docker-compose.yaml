@@ -1,0 +1,41 @@
+services:
+  mapr:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dfab
+    restart: unless-stopped
+    environment:
+      - clusterName=dfab.io
+      - isSecure=true
+      - MAPR_TZ=Europe/London
+      - TZ=Europe/London
+    ports:
+      # - "9443:9443"  ## optional for Installer UI
+      - "8443:8443"  ## optional for MCS
+      - "2222:22"  ## optional for SSH
+      - "12443:12443" ## optional for NiFi
+      - "8047:8047" ## optional for Drill
+      - "9995:9995" ## optional for Zeppelin
+    cap_add:
+      - SYS_ADMIN
+    privileged: true
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    entrypoint: ["/mapr-start.sh"]
+
+  mysql:
+    platform: linux/amd64
+    image: mysql:latest
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin123.
+    entrypoint: ["/db-start.sh"]
+    volumes:
+      - mysql:/var/lib/mysql
+
+volumes:
+  mysql: {}
