@@ -24,18 +24,21 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    entrypoint: ["/mapr-start.sh"]
+    entrypoint: ["/entrypoint.sh"]
 
-  mysql:
-    platform: linux/amd64
-    image: mysql:latest
-    container_name: mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: Admin123.
-    entrypoint: ["/db-start.sh"]
-    volumes:
-      - mysql:/var/lib/mysql
+#   mysql:
+#     platform: linux/amd64
+#     image: mysql/mysql-server:8.0
+#     container_name: mysql
+#     restart: unless-stopped
+#     environment:
+#       MYSQL_DATABASE: 'demodb'
+#       MYSQL_USER: 'mysql'
+#       MYSQL_PASSWORD: 'Admin123.'
+#       MYSQL_ROOT_PASSWORD: Admin123.
+#     volumes:
+#       - mysql:/var/lib/mysql
+#       - ./mysqld.cnf:/etc/mysql/conf.d/mysqld.cnf
 
-volumes:
-  mysql: {}
+# volumes:
+#   mysql: {}
