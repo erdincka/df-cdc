@@ -60,7 +60,9 @@ RUN ln -s /usr/share/java/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar /opt
 COPY mysqld.cnf /etc/mysql/conf.d/mysqld.cnf
 
 ### Add notebook to Zeppelin
-COPY CDC_Dashboard.zpln /opt/mapr/zeppelin/current/notebook/
-# Store the NiFi flow file
-COPY CDC_from_MySQL_v2.xml /app/
+# COPY CDC_2M1KSJM36.zpln /opt/mapr/zeppelin/current/notebook/
 
+# Store the NiFi flow file
+# COPY CDC_from_MySQL_v2.xml /app/
+
+RUN rm ./mysql-connector-j_"${MYSQL_CONNECTOR_VERSION}"-1ubuntu"${UBUNTU_VERSION}"_all.deb

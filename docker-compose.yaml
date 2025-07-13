@@ -2,7 +2,7 @@ services:
   mapr:
     platform: linux/amd64
     build:
-      context: .
+      context: mapr
       dockerfile: Dockerfile
       args:
         # - MAPR_REPO=https://package.ezmeral.hpe.com/releases/
@@ -20,7 +20,7 @@ services:
     container_name: mapr
     restart: unless-stopped
     environment:
-      - clusterName=mapr.io
+      - clusterName=maprdemo.mapr.io
       - isSecure=true
       - MAPR_TZ=Europe/London
       - TZ=Europe/London
