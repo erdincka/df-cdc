@@ -32,11 +32,20 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 ## Demo Flow
 
 - Open [NiFi](https://localhost:12443/nifi) to configure passwords and enable controllers
-    - login with provided credentials (defaults: `admin/Admin123.Admin123.`)
+    - login with `admin/Admin123.Admin123.` (or use your credentials if you've changed in the `docker-compose.yaml` file)
+    - Import [the flow](./CDC_from_MySQL_v2.xml) and update settings
+        - Double-click on MySQL processor, enter `mysql_password`
+        - Double-click on Put_S3_Object processor, enter `access_key` and `secret_key`
+    - Run all processors
 
 - Open Zeppelin Notebook
+    - Login with `mapr/mapr`
+    - Import [the note](./CDC_2M1KSJM36.json)
+    - Configure Interpreter - Hive
+    - Run paragraphs
 
 - Insert records to the pre-configured MySQL table `users`
+    - Run `python3 users.py`
 
 - Check NiFi flow to see processed messages (it may take a while to process all records)
 
