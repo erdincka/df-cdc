@@ -55,9 +55,13 @@ echo "Cluster Admin Credentials: mapr/mapr"
 echo "MySQL DB Credentials: root/Admin123."
 
 # Setup S3
-cp /opt/mapr/conf/ca/chain-ca.pem /root/.mc/certs/CAs/
 echo "S3 Credentials:"
-maprcli s3keys generate -domainname primary -accountname default -username mapr
+mkdir /root/.mc/certs/CAs/; cp /opt/mapr/conf/ca/chain-ca.pem /root/.mc/certs/CAs/
+AWS_CREDS=$(maprcli s3keys generate -domainname primary -accountname default -username mapr)
+access_key=$(echo "$AWS_CREDS" | grep -v accesskey | awk '{ print $1 }')
+secret_key=$(echo "$AWS_CREDS" | grep -v accesskey | awk '{ print $2 }')
+/opt/mapr/bin/mc alias set df https://maprdemo.io:9000 $access_key $secret_key
+/opt/mapr/bin/mc mb df/demobk
 
 echo "[ $(date) ] Ready!"
 sleep infinity # just in case, keep container running
