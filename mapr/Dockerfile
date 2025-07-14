@@ -66,3 +66,6 @@ COPY mysqld.cnf /etc/mysql/conf.d/mysqld.cnf
 # COPY CDC_from_MySQL_v2.xml /app/
 
 RUN rm ./mysql-connector-j_"${MYSQL_CONNECTOR_VERSION}"-1ubuntu"${UBUNTU_VERSION}"_all.deb
+
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+COPY users.py /app/

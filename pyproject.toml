@@ -1,0 +1,13 @@
+[project]
+name = "mapr"
+version = "0.1.0"
+description = "Demo Sandbox with Data Fabric"
+readme = "README.md"
+authors = [
+    { name = "Erdinc Kaya", email = "erdincka@msn.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "mysql-connector-python>=9.3.0",
+]
