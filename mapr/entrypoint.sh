@@ -20,6 +20,9 @@ mysql -u root <<EOD
     GRANT ALL PRIVILEGES ON metastore.* TO 'hive'@'localhost';
     FLUSH PRIVILEGES;
 EOD
+
+sed -i "s|nifi.web.proxy.host=.*$|nifi.web.proxy.host=${NIFI_WEB_PROXY_HOST}|" /opt/mapr/nifi/nifi-${NIFI_VERSION}/conf/nifi.properties
+
 # Remove the while loop at the end so we can continue with the rest of the default init-script
 sed -i '1,/This container IP/!d' /usr/bin/init-script
 /usr/bin/init-script

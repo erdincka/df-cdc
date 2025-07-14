@@ -17,10 +17,16 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
 - Docker
 
+- Git
+
 
 ## Run
 
-- (Optional) Edit [Compose file](./docker-compose.yaml) to set "ARGS".
+- Clone the repository `git clone https://github.com/erdincka/df-cdc.git`
+
+- Edit [Compose file](./docker-compose.yaml)
+    - Replace `NIFI_WEB_PROXY_HOST` with the hostname of your docker - Leave empty if running locally
+    - (Optional) Set other "ARGS".
 
 - Run `docker compose -f docker-compose.yaml up -d`.
 

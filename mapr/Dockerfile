@@ -68,4 +68,5 @@ COPY mysqld.cnf /etc/mysql/conf.d/mysqld.cnf
 RUN rm ./mysql-connector-j_"${MYSQL_CONNECTOR_VERSION}"-1ubuntu"${UBUNTU_VERSION}"_all.deb
 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+COPY pyproject.toml uv.lock .python-version /app/
 COPY users.py /app/
