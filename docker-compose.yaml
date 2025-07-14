@@ -24,6 +24,7 @@ services:
       - isSecure=true
       - MAPR_TZ=Europe/London
       - TZ=Europe/London
+      - NIFI_WEB_PROXY_HOST=docker:12443
     ports:
       # - "9443:9443"  ## optional for Installer UI
       - "8443:8443"  ## optional for MCS
