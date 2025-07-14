@@ -6,6 +6,8 @@ echo "[ $(date) ] Starting container configuration, watch logs and be patient, t
 usermod -d /var/lib/mysql/ mysql
 service mysql start
 mysql -u root <<EOD
+    CREATE USER IF NOT EXISTS 'root'@'127.0.0.1' IDENTIFIED BY 'Admin123.';
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1';
     DROP DATABASE IF EXISTS metastore;
     CREATE DATABASE metastore;
     DROP USER IF EXISTS hive@'%';
@@ -43,11 +45,16 @@ echo "[ $(date) ] Hive table for demo `users` created."
 
 # Upload NiFi template via REST call
 
-echo 
+echo "[ $(date) ] CREDENTIALS:"
 echo "Hive Credentials: hive/Admin123."
 echo "NiFi Credentials: admin/Admin123.Admin123."
 echo "Cluster Admin Credentials: mapr/mapr"
 echo "MySQL DB Credentials: root/Admin123."
-echo "[ $(date) ] Ready!"
 
+# Setup S3
+cp /opt/mapr/conf/ca/chain-ca.pem /root/.mc/certs/CAs/
+echo "S3 Credentials:"
+maprcli s3keys generate -domainname primary -accountname default -username mapr
+
+echo "[ $(date) ] Ready!"
 sleep infinity # just in case, keep container running

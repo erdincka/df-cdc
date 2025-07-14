@@ -31,12 +31,18 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
 ## Demo Flow
 
+- Copy S3 `Access Key` and `Secret Access Key` from the end of `docker logs mapr` output (you may need to wait for all services to start to see that).
+
 - Open [NiFi](https://localhost:12443/nifi) to configure passwords and enable controllers
-    - login with `admin/Admin123.Admin123.` (or use your credentials if you've changed in the `docker-compose.yaml` file)
-    - Import [the flow](./CDC_from_MySQL_v2.xml) and update settings
-        - Double-click on MySQL processor, enter `mysql_password`
-        - Double-click on Put_S3_Object processor, enter `access_key` and `secret_key`
-    - Run all processors
+    - Login with `admin/Admin123.Admin123.` (or use your credentials if you've changed in the `docker-compose.yaml` file)
+    - [Upload](./images/NiFi_UploadTemplate.png) the [template file: CDC_from_MySQL_v3.xml](./CDC_from_MySQL_v3.xml).
+        - Click on empty space, and select [Settings](./images/NiFi_ControllerSettings.png) for "NiFi Flow".
+            - In the "Controller Services" tab,
+                - Enter mapr password `mapr` for [Hive3_EEP_ConnectionPool](./images/NiFi_HiveSettings.png) by clicking "gear" icon.
+                - Enable [all services](./images/NiFi_ControllerServices.png) by clicking the lightning icon and then "Enable".
+        - Double-click on [CaptureChangeMySQL processor](./images/NiFi_CaptureChangeMySQL.png), enter [Password](./images/NiFi_MySQLPassword.png).
+        - Double-click on PutS3Object processor, and enter `Access Key ID` and `Secret Access Key`.
+    - Click on empty space and select "Play" button to start all processors.
 
 - Open Zeppelin Notebook
     - Login with `mapr/mapr`
@@ -45,7 +51,7 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
     - Run paragraphs
 
 - Insert records to the pre-configured MySQL table `users`
-    - Run `python3 users.py`
+    - Run `uv run users.py`
 
 - Check NiFi flow to see processed messages (it may take a while to process all records)
 

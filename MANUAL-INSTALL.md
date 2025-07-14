@@ -186,7 +186,7 @@ CREATE TABLE users (
 
 - Setup as shown below:
 
-  ![Hive S3 Connection](./hive-s3-connection.png)
+  ![Hive S3 Connection](./images/hive-s3-connection.png)
 
 <!-- Create view in the catalog:
 
