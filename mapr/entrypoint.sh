@@ -4,7 +4,7 @@ echo "[ $(date) ] Starting container configuration, watch logs and be patient, t
 
 # Prepare DB for Hive
 usermod -d /var/lib/mysql/ mysql
-service mysql start
+service mysql start 2>&1 > /dev/null
 mysql -u root <<EOD
     CREATE USER IF NOT EXISTS 'root'@'127.0.0.1' IDENTIFIED BY 'Admin123.';
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1';
@@ -21,22 +21,28 @@ mysql -u root <<EOD
     FLUSH PRIVILEGES;
 EOD
 
-sed -i "s|nifi.web.proxy.host=.*$|nifi.web.proxy.host=${NIFI_WEB_PROXY_HOST}|" /opt/mapr/nifi/nifi-${NIFI_VERSION}/conf/nifi.properties
-
 # Remove the while loop at the end so we can continue with the rest of the default init-script
 sed -i '1,/This container IP/!d' /usr/bin/init-script
-/usr/bin/init-script
-echo "[ $(date) ] Data Fabric configured, preparing for demo..."
+echo "[ $(date) ] Data Fabric configuring, this will take some time..."
+/usr/bin/init-script 2>&1 > /root/configure-$(date +%Y%m%d_%H%M%S).log
+echo "[ $(date) ] Data Fabric configuration is complete, preparing for demo..."
 
 /opt/mapr/hive/hive-3.1.3/bin/schematool -dbType mysql -initSchema
 # /opt/mapr/hive/hive-3.1.3/bin/hive.sh restart
-echo "[ $(date) ] Hive configured to use MySQL DB"
+echo "[ $(date) ] Hive configured to use MySQL DB, waiting for startup...."
 
 # Create Hive table for users
 sleep 120
-hive --service beeline -u "jdbc:hive2://`hostname -f`:10000/default;ssl=true;auth=maprsasl" -f /app/create-table.hiveql
+hive --service beeline -u "jdbc:hive2://`hostname -f`:10000/default;ssl=true;auth=maprsasl" -f /app/create-table.hiveql 2>&1 >> /root/hive-tablecreate.log
 
-# /opt/mapr/nifi/nifi-1.28.0/bin/nifi.sh restart
+# Set NiFi credentials
+/opt/mapr/nifi/nifi-"${NIFI_VERSION}"/bin/nifi.sh set-single-user-credentials "${NIFI_USER}" "${NIFI_PASSWORD}"
+
+if [ -n "${NIFI_WEB_PROXY_HOST}" ]; then
+    sed -i "s|nifi.web.proxy.host=.*$|nifi.web.proxy.host=${NIFI_WEB_PROXY_HOST}|" /opt/mapr/nifi/nifi-${NIFI_VERSION}/conf/nifi.properties
+    /opt/mapr/nifi/nifi-1.28.0/bin/nifi.sh restart 2>&1 >> /root/nifi-restart.log
+    echo "[ $(date) ] NiFi set up to use proxy $NIFI_WEB_PROXY_HOST"
+fi
 
 echo """
 [client]
@@ -44,24 +50,27 @@ user=root
 password=Admin123.
 """ > /etc/mysql/conf.d/client.cnf
 mysql -u root < /app/create-demodb-tables.sql
-echo "[ $(date) ] Hive table for demo `users` created."
-
-# Upload NiFi template via REST call
-
-echo "[ $(date) ] CREDENTIALS:"
-echo "Hive Credentials: hive/Admin123."
-echo "NiFi Credentials: admin/Admin123.Admin123."
-echo "Cluster Admin Credentials: mapr/mapr"
-echo "MySQL DB Credentials: root/Admin123."
+echo "[ $(date) ] Hive table 'users' created."
 
 # Setup S3
-echo "S3 Credentials:"
-mkdir /root/.mc/certs/CAs/; cp /opt/mapr/conf/ca/chain-ca.pem /root/.mc/certs/CAs/
+mkdir -p /root/.mc/certs/CAs/; cp /opt/mapr/conf/ca/chain-ca.pem /root/.mc/certs/CAs/
 AWS_CREDS=$(maprcli s3keys generate -domainname primary -accountname default -username mapr)
 access_key=$(echo "$AWS_CREDS" | grep -v accesskey | awk '{ print $1 }')
 secret_key=$(echo "$AWS_CREDS" | grep -v accesskey | awk '{ print $2 }')
-/opt/mapr/bin/mc alias set df https://maprdemo.io:9000 $access_key $secret_key
+# Create bucket
+/opt/mapr/bin/mc alias set df https://maprdemo.mapr.io:9000 $access_key $secret_key
 /opt/mapr/bin/mc mb df/demobk
+
+echo "[ $(date) ] CREDENTIALS:"
+echo "Hive Credentials: hive/Admin123."
+echo "NiFi Credentials: ${NIFI_USER}/${NIFI_PASSWORD}"
+echo "Cluster Admin Credentials: mapr/mapr"
+echo "MySQL DB Credentials: root/Admin123."
+echo "S3 Credentials"
+echo "S3 Access Key: ${access_key}"
+echo "S3 Secret Key: ${secret_key}"
+
+# TODO: Upload NiFi template via REST call
 
 echo "[ $(date) ] Ready!"
 sleep infinity # just in case, keep container running

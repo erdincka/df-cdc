@@ -1,7 +1,18 @@
 services:
   mapr:
     platform: linux/amd64
-    image: erdincka/maprdemo:0.0.1
+    build:
+      context: mapr
+      dockerfile: Dockerfile
+      args:
+        # - MAPR_REPO=https://package.ezmeral.hpe.com/releases/
+        - MAPR_REPO=http://10.1.1.4/mapr # this is my local repo, use the line above for official release
+        # Don't change these unless you are using a newer sandbox image
+        - NIFI_VERSION=1.28.0
+        - MYSQL_CONNECTOR_VERSION=9.3.0
+        - UBUNTU_VERSION=22.04
+      platforms:
+        - "linux/amd64"
     container_name: mapr
     restart: unless-stopped
     environment:

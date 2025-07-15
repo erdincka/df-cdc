@@ -6,7 +6,7 @@ Change Data Capture is a mechanism to grab the changes happening on a database a
 
 To use the demo, you can use provided [docker-compose.yaml](./docker-compose.yaml) file to start a MapR Sandbox instance automatically configured with all required core and EEP components (ie, NiFi, Hive, Zeppelin).
 
-You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to see changes reflected in near realtime.
+You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to see changes reflected in real time.
 
 ## TODO 
 
@@ -15,9 +15,9 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
 ## Requirements
 
-- Docker
+- Docker, with min 8 cores & 30GB memory
 
-- Git
+- Git CLI (Download from [its website](https://git-scm.com/downloads) or `brew install git` on MacOS)
 
 
 ## Run
@@ -41,16 +41,18 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
 - Open [NiFi](https://localhost:12443/nifi) to configure passwords and enable controllers
     - Login with `admin/Admin123.Admin123.` (or use your credentials if you've changed in the `docker-compose.yaml` file)
-    - Drag "Process Group" from top of the page onto Canvas, browse to upload the [flow file: NiFi_Flow.json](./NiFi_Flow.json).
+    - Drag "Process Group" from top of the page onto Canvas, browse to upload the [flow file: NiFi_Flow-2.json](./NiFi_Flow-2.json).
         - Select the Process Group, and select [Settings](./images/NiFi_ControllerSettings.png) for "NiFi Flow".
             - In the "Controller Services" tab,
                 - Enter mapr password `mapr` for [Hive3_EEP_ConnectionPool](./images/NiFi_HiveSettings.png) by clicking "gear" icon.
                 - Enable [all services](./images/NiFi_ControllerServices.png) by clicking the lightning icon and then "Enable".
+            - Enter into "Process Group" by double-click.
         - Double-click on [CaptureChangeMySQL processor](./images/NiFi_CaptureChangeMySQL.png), enter [Password](./images/NiFi_MySQLPassword.png).
         - Double-click on PutS3Object processor, and enter `Access Key ID` and `Secret Access Key`.
     - Click on empty space and select "Play" button to start all processors.
 
-- Open Zeppelin Notebook
+
+- Open [Zeppelin](https://localhost:9995/)
     - Login with `mapr/mapr`
     - Import [the note](./HiveDashboard_2M333SR9V.zpln)
     - Configure Interpreter - Hive

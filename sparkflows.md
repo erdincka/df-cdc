@@ -44,7 +44,7 @@ Administration - Connections - Add connection
 
 - Replace the TRUSTSTORE_PWD with actual password from `/opt/mapr/conf/store-passwords.txt` file:
 
-    `jdbc:hive2://10.1.1.20:10000/default;ssl=true;auth=maprsasl;sslTrustStore=/root/ssl_truststore;trustStorePassword=TRUSTSTORE_PWD;user=mapr;password=mapr`
+    `jdbc:hive2://maprdemo:10000/default;ssl=true;auth=maprsasl;sslTrustStore=/root/ssl_truststore;trustStorePassword=TRUSTSTORE_PWD;user=mapr;password=mapr`
 
 
 ### Mysql connection:

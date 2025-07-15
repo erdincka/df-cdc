@@ -71,7 +71,7 @@
 
 API call to get a new list of users: https://randomuser.me/api/?results=10&format=csv
 
-or use `python3 users.py --count <number_of_users>`
+or use `uv run users.py --count <number_of_users>`
 
 
 ## Setup NiFi
@@ -82,7 +82,7 @@ or use `python3 users.py --count <number_of_users>`
   `apt install -y mapr-nifi`
   `/opt/mapr/server/configure.sh -R`
 
-- Download and import [template](./CDC_from_MySQL_v2.xml).
+- Upload [the flow](./NiFi_Flow-2.json).
 
 - Edit processors for missing passwords, and change bucket, db names etc.
 
@@ -110,6 +110,7 @@ or use `python3 users.py --count <number_of_users>`
 
 ## Create Hive Table
 
+Replace `localhost` with actual hostname to avoid self-signed certificate errors
 
 `hive --service beeline`
 
@@ -146,7 +147,7 @@ CREATE TABLE users (
 
 ### Zeppelin configuration
 
-- Create new context
+- Create new context (replace `localhost` with actual hostname to avoid self-signed certificate errors)
 
   ```ini
   hive.url = jdbc:hive2://localhost:10000/default;ssl=true;auth=maprsasl
@@ -155,14 +156,14 @@ CREATE TABLE users (
   hive.driver =	org.apache.hive.jdbc.HiveDriver
   ```
 
-- Use [Dashboard](./Dashboard.ipynb) or [Zeppelin Dashboard](./Dashboard_2M1KSJM36.zpln) file to query the Hive table.
+- Use [The Note](./HiveDashboard_2M333SR9V.zpln) file to query the Hive table.
 
 
 #### Create S3 bucket
 
-- Create alias
+- Create alias (replace `localhost` with actual hostname to avoid self-signed certificate errors)
 
-  `mc alias set dfhost https://dfhost:9000 myaccesskey mysecretkey`
+  `mc alias set dfhost https://localhost:9000 myaccesskey mysecretkey`
 
 - Create bucket
 
