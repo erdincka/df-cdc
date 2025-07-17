@@ -1,15 +1,15 @@
 services:
   mapr:
     platform: linux/amd64
-    image: erdincka/maprdemo:0.0.1
+    image: erdincka/maprdemo:latest
     container_name: mapr
     restart: unless-stopped
     environment:
-      - clusterName=maprdemo.mapr.io
+      - clusterName=mapr.demo.local
       - isSecure=true
       - MAPR_TZ=Europe/London
       - TZ=Europe/London
-      - NIFI_WEB_PROXY_HOST=docker.ez.win.lab:12443
+      - NIFI_WEB_PROXY_HOST=docker:12443
       - NIFI_VERSION=1.28.0
       - NIFI_USER=admin
       # Following password needs to be min 12 chars
@@ -28,20 +28,3 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     entrypoint: ["/entrypoint.sh"]
-
-#   mysql:
-#     platform: linux/amd64
-#     image: mysql/mysql-server:8.0
-#     container_name: mysql
-#     restart: unless-stopped
-#     environment:
-#       MYSQL_DATABASE: 'demodb'
-#       MYSQL_USER: 'mysql'
-#       MYSQL_PASSWORD: 'Admin123.'
-#       MYSQL_ROOT_PASSWORD: Admin123.
-#     volumes:
-#       - mysql:/var/lib/mysql
-#       - ./mysqld.cnf:/etc/mysql/conf.d/mysqld.cnf
-
-# volumes:
-#   mysql: {}

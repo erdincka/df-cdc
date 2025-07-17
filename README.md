@@ -41,7 +41,7 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
 - Open [NiFi](https://localhost:12443/nifi) to configure passwords and enable controllers
     - Login with `admin/Admin123.Admin123.` (or use your credentials if you've changed in the `docker-compose.yaml` file)
-    - Drag "Process Group" from top of the page onto Canvas, browse to upload the [flow file: NiFi_Flow-2.json](./NiFi_Flow-2.json).
+    - Drag "Process Group" from top of the page onto Canvas, browse to upload the [flow file: CDC MySQL to Hive Flow.json](./CDC%20MySQL%20to%20Hive%20Flow.json.json).
         - Select the Process Group, and select [Settings](./images/NiFi_ControllerSettings.png) for "NiFi Flow".
             - In the "Controller Services" tab,
                 - Enter mapr password `mapr` for [Hive3_EEP_ConnectionPool](./images/NiFi_HiveSettings.png) by clicking "gear" icon.

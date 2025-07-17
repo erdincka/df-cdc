@@ -6,8 +6,8 @@ echo "[ $(date) ] Starting container configuration, watch logs and be patient, t
 usermod -d /var/lib/mysql/ mysql
 service mysql start 2>&1 > /dev/null
 mysql -u root <<EOD
-    CREATE USER IF NOT EXISTS 'root'@'127.0.0.1' IDENTIFIED BY 'Admin123.';
-    GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1';
+    CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'Admin123.';
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
     DROP DATABASE IF EXISTS metastore;
     CREATE DATABASE metastore;
     DROP USER IF EXISTS hive@'%';
@@ -31,9 +31,8 @@ echo "[ $(date) ] Data Fabric configuration is complete, preparing for demo..."
 # /opt/mapr/hive/hive-3.1.3/bin/hive.sh restart
 echo "[ $(date) ] Hive configured to use MySQL DB, waiting for startup...."
 
-# Create Hive table for users
-sleep 120
-hive --service beeline -u "jdbc:hive2://`hostname -f`:10000/default;ssl=true;auth=maprsasl" -f /app/create-table.hiveql 2>&1 >> /root/hive-tablecreate.log
+# Obtain ticket for mapr user
+echo mapr | sudo -u mapr maprlogin password
 
 # Set NiFi credentials
 /opt/mapr/nifi/nifi-"${NIFI_VERSION}"/bin/nifi.sh set-single-user-credentials "${NIFI_USER}" "${NIFI_PASSWORD}"
@@ -50,16 +49,30 @@ user=root
 password=Admin123.
 """ > /etc/mysql/conf.d/client.cnf
 mysql -u root < /app/create-demodb-tables.sql
-echo "[ $(date) ] Hive table 'users' created."
+echo "[ $(date) ] MySQL demo table 'users' created."
 
 # Setup S3
 mkdir -p /root/.mc/certs/CAs/; cp /opt/mapr/conf/ca/chain-ca.pem /root/.mc/certs/CAs/
 AWS_CREDS=$(maprcli s3keys generate -domainname primary -accountname default -username mapr)
 access_key=$(echo "$AWS_CREDS" | grep -v accesskey | awk '{ print $1 }')
 secret_key=$(echo "$AWS_CREDS" | grep -v accesskey | awk '{ print $2 }')
+mkdir -p /home/mapr/.aws
+echo """
+[default]
+    accessKey=${access_key}
+    secretKey=${secret_key}
+""" > /home/mapr/.aws/credentials
+chown -R mapr:mapr /home/mapr/.aws/
+
 # Create bucket
-/opt/mapr/bin/mc alias set df https://maprdemo.mapr.io:9000 $access_key $secret_key
+/opt/mapr/bin/mc alias set df https://mapr.demo.local:9000 $access_key $secret_key
 /opt/mapr/bin/mc mb df/demobk
+
+# Create Hive table for users
+sleep 60; hive --service beeline -u "jdbc:hive2://`hostname -f`:10000/default;ssl=true;auth=maprsasl" -f /app/create-table.hiveql 2>&1 >> /root/hive-tablecreate.log
+
+# Mount locally
+mount -t nfs -o nolock mapr:/mapr /mapr
 
 echo "[ $(date) ] CREDENTIALS:"
 echo "Hive Credentials: hive/Admin123."

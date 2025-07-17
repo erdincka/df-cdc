@@ -82,7 +82,7 @@ or use `uv run users.py --count <number_of_users>`
   `apt install -y mapr-nifi`
   `/opt/mapr/server/configure.sh -R`
 
-- Upload [the flow](./NiFi_Flow-2.json).
+- Upload [the flow](./CDC%20MySQL%20to%20Hive%20Flow.json).
 
 - Edit processors for missing passwords, and change bucket, db names etc.
 

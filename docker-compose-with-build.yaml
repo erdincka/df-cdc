@@ -16,7 +16,7 @@ services:
     container_name: mapr
     restart: unless-stopped
     environment:
-      - clusterName=maprdemo.mapr.io
+      - clusterName=mapr.demo.local
       - isSecure=true
       - MAPR_TZ=Europe/London
       - TZ=Europe/London

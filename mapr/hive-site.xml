@@ -88,7 +88,7 @@
     </property>
     <property>
         <name>hive.metastore.uris</name>
-        <value>thrift://localhost:9083</value>
+        <value>thrift://mapr.demo.local:9083</value>
         <description>Metastore host</description>
     </property>
     <property>
