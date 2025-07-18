@@ -10,10 +10,12 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
 ## TODO 
 
-[PLACE DEMO PIPELINE IMAGE HERE]
+![Demo Flow](./images/CDC%20Demo.png)
 
 
 ## Requirements
+
+- Basic knowledge of Data Fabric, NiFi, Hive & Zeppelin - not necesarily needed though
 
 - Docker, with min 8 cores & 30GB memory
 
@@ -30,35 +32,43 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
 - Run `docker compose -f docker-compose.yaml up -d`.
 
-- Open [App UI](http://localhost:3000).
-
-- Follow instructions.
-
 
 ## Demo Flow
 
-- Copy S3 `Access Key` and `Secret Access Key` from the end of `docker logs mapr` output (you may need to wait for all services to start to see that).
-
 - Open [NiFi](https://localhost:12443/nifi) to configure passwords and enable controllers
-    - Login with `admin/Admin123.Admin123.` (or use your credentials if you've changed in the `docker-compose.yaml` file)
+    - Login with `admin/Admin123.Admin123.` (or use your credentials if you've changed in the `docker-compose.yaml` file).
+
     - Drag "Process Group" from top of the page onto Canvas, browse to upload the [flow file: CDC MySQL to Hive Flow.json](./CDC%20MySQL%20to%20Hive%20Flow.json.json).
+
         - Select the Process Group, and select [Settings](./images/NiFi_ControllerSettings.png) for "NiFi Flow".
+    
             - In the "Controller Services" tab,
+    
                 - Enter mapr password `mapr` for [Hive3_EEP_ConnectionPool](./images/NiFi_HiveSettings.png) by clicking "gear" icon.
+    
                 - Enable [all services](./images/NiFi_ControllerServices.png) by clicking the lightning icon and then "Enable".
+    
             - Enter into "Process Group" by double-click.
+    
         - Double-click on [CaptureChangeMySQL processor](./images/NiFi_CaptureChangeMySQL.png), enter [Password](./images/NiFi_MySQLPassword.png).
-        - Double-click on PutS3Object processor, and enter `Access Key ID` and `Secret Access Key`.
+    
+        - S3 credentials should be available within the provided credentials file `/home/mapr/.aws/credentials`.
+    
     - Click on empty space and select "Play" button to start all processors.
 
 
-- Open [Zeppelin](https://localhost:9995/)
+- Open [Zeppelin](https://localhost:9995/) (replace `localhost` if not running locally)
+
     - Login with `mapr/mapr`
+
     - Import [the note](./HiveDashboard_2M333SR9V.zpln)
-    - Configure Interpreter - Hive
+
+    <!-- - Configure Interpreter - Hive -->
+
     - Run paragraphs
 
 - Insert records to the pre-configured MySQL table `users`
+
     - Run `uv run users.py`
 
 - Check NiFi flow to see processed messages (it may take a while to process all records)

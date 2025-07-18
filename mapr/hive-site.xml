@@ -72,7 +72,7 @@
     </property>
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:mysql://localhost/metastore</value>
+        <value>jdbc:mysql://127.0.0.1/metastore</value>
     </property>
     <property>
         <name>javax.jdo.option.ConnectionDriverName</name>
@@ -88,7 +88,7 @@
     </property>
     <property>
         <name>hive.metastore.uris</name>
-        <value>thrift://mapr.demo.local:9083</value>
+        <value>thrift://mapr.demo:9083</value>
         <description>Metastore host</description>
     </property>
     <property>

@@ -2,22 +2,13 @@
 
 echo "[ $(date) ] Starting container configuration, watch logs and be patient, this will take a while!"
 
-# Prepare DB for Hive
+# Start MySQL
 usermod -d /var/lib/mysql/ mysql
-service mysql start 2>&1 > /dev/null
+service mysql start
+# Prepare DB for Hive
 mysql -u root <<EOD
-    CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'Admin123.';
-    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
-    DROP DATABASE IF EXISTS metastore;
-    CREATE DATABASE metastore;
-    DROP USER IF EXISTS hive@'%';
-    DROP USER IF EXISTS hive@'localhost';
-    CREATE USER 'hive'@'%' IDENTIFIED BY 'Admin123.';
-    CREATE USER 'hive'@'localhost' IDENTIFIED BY 'Admin123.';
-    REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'hive'@'%';
-    REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'hive'@'localhost';
-    GRANT ALL PRIVILEGES ON metastore.* TO 'hive'@'%';
-    GRANT ALL PRIVILEGES ON metastore.* TO 'hive'@'localhost';
+    CREATE USER IF NOT EXISTS 'root'@'127.0.0.1' IDENTIFIED BY 'Admin123.';
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1';
     FLUSH PRIVILEGES;
 EOD
 
@@ -27,9 +18,9 @@ echo "[ $(date) ] Data Fabric configuring, this will take some time..."
 /usr/bin/init-script 2>&1 > /root/configure-$(date +%Y%m%d_%H%M%S).log
 echo "[ $(date) ] Data Fabric configuration is complete, preparing for demo..."
 
-/opt/mapr/hive/hive-3.1.3/bin/schematool -dbType mysql -initSchema
+# /opt/mapr/hive/hive-3.1.3/bin/schematool -dbType mysql -initSchema
 # /opt/mapr/hive/hive-3.1.3/bin/hive.sh restart
-echo "[ $(date) ] Hive configured to use MySQL DB, waiting for startup...."
+# echo "[ $(date) ] Hive configured to use MySQL DB, waiting for startup...."
 
 # Obtain ticket for mapr user
 echo mapr | sudo -u mapr maprlogin password
@@ -43,6 +34,9 @@ if [ -n "${NIFI_WEB_PROXY_HOST}" ]; then
     echo "[ $(date) ] NiFi set up to use proxy $NIFI_WEB_PROXY_HOST"
 fi
 
+# Re-configure for HistoryServer
+# /opt/mapr/server/configure.sh -R -HS `hostname -f` 2>&1 > /root/configure-$(date +%Y%m%d_%H%M%S).log
+# Create demo table in MySQL
 echo """
 [client]
 user=root
@@ -59,23 +53,26 @@ secret_key=$(echo "$AWS_CREDS" | grep -v accesskey | awk '{ print $2 }')
 mkdir -p /home/mapr/.aws
 echo """
 [default]
-    accessKey=${access_key}
-    secretKey=${secret_key}
+    accessKey = ${access_key}
+    secretKey = ${secret_key}
 """ > /home/mapr/.aws/credentials
+    # aws_access_key_id = ${access_key}
+    # aws_secret_access_key = ${secret_key}
 chown -R mapr:mapr /home/mapr/.aws/
 
 # Create bucket
-/opt/mapr/bin/mc alias set df https://mapr.demo.local:9000 $access_key $secret_key
+/opt/mapr/bin/mc alias set df https://mapr.demo:9000 $access_key $secret_key
 /opt/mapr/bin/mc mb df/demobk
+/opt/mapr/bin/mc mb df/demobk/staging
 
 # Create Hive table for users
-sleep 60; hive --service beeline -u "jdbc:hive2://`hostname -f`:10000/default;ssl=true;auth=maprsasl" -f /app/create-table.hiveql 2>&1 >> /root/hive-tablecreate.log
+# sleep 60; hive --service beeline -u "jdbc:hive2://`hostname -f`:10000/default;ssl=true;auth=maprsasl" -f /app/create-table.hiveql 2>&1 >> /root/hive-tablecreate.log
 
 # Mount locally
 mount -t nfs -o nolock mapr:/mapr /mapr
 
 echo "[ $(date) ] CREDENTIALS:"
-echo "Hive Credentials: hive/Admin123."
+# echo "Hive Credentials: hive/Admin123."
 echo "NiFi Credentials: ${NIFI_USER}/${NIFI_PASSWORD}"
 echo "Cluster Admin Credentials: mapr/mapr"
 echo "MySQL DB Credentials: root/Admin123."

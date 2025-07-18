@@ -1,4 +1,3 @@
-from datetime import datetime
 import json
 import httpx
 import argparse
@@ -6,7 +5,7 @@ import mysql.connector
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-s", "--server", default="localhost")
+parser.add_argument("-s", "--server", default="127.0.0.1")
 parser.add_argument("-u", "--user", default="root")
 parser.add_argument("-p", "--password", default="Admin123.")
 parser.add_argument("-d", "--database", default="demodb")
@@ -30,6 +29,8 @@ def get_users_from_file():
 
 
 users = get_users_from_url()
+
+print(f"Connecting to {args.server} with {args.user} for {args.database}")
 
 mydb = mysql.connector.connect(
     host=args.server, user=args.user, password=args.password, database=args.database

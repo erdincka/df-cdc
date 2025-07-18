@@ -26,12 +26,12 @@ RUN dpkg -i ./mysql-connector-j_$MYSQL_CONNECTOR_VERSION-1ubuntu"${UBUNTU_VERSIO
 RUN sed -i "s|http://dfaf.mip.storage.hpecorp.net/artifactory/list/prestage/releases|${MAPR_REPO}|g" /etc/apt/sources.list.d/mapr.list
 RUN apt update && apt upgrade -y && apt install -y \
     mapr-nifi \
-    mapr-hive \
-    mapr-hivemetastore \
-    mapr-hiveserver2 \
-    mapr-hivewebhcat \
-    mysql-server \
-    mapr-zeppelin
+    mapr-drill \
+    mapr-spark \
+    mapr-grafana \
+    mysql-server
+
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 
 EXPOSE 9443 8443 12443 2222 8047 9995
 
@@ -43,17 +43,16 @@ RUN wget -P /opt/mapr/nifi/nifi-"${NIFI_VERSION}"/extensions https://repo1.maven
 # Enable MySQL CDC recording
 COPY mysqld.cnf /etc/mysql/conf.d/mysqld.cnf
 
-# Configuration for Hive, sets up local MySQL DB
-RUN ln -s /usr/share/java/mysql-connector-java-$MYSQL_CONNECTOR_VERSION.jar /opt/mapr/hive/current/lib/mysql-connector-java.jar
-COPY hive-site.xml /opt/mapr/hive/current/conf/hive-site.xml
-
+# Create DB tables for demo
 COPY create-demodb-tables.sql /app/
-COPY create-table.hiveql /app/
+
 COPY entrypoint.sh /
 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 COPY pyproject.toml uv.lock .python-version /app/
 COPY users.py /app/
+
+RUN wget -P /opt/mapr/spark/spark-3.5.5/jars https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.9.2/iceberg-spark-runtime-3.5_2.12-1.9.2.jar
 
 # Cleanup
 RUN rm ./mysql-connector-j_"${MYSQL_CONNECTOR_VERSION}"-1ubuntu"${UBUNTU_VERSION}"_all.deb
