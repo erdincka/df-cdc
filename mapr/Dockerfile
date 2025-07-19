@@ -28,12 +28,13 @@ RUN apt update && apt upgrade -y && apt install -y \
     mapr-nifi \
     mapr-drill \
     mapr-spark \
+    mapr-spark-thriftserver \
     mapr-grafana \
     mysql-server
 
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 
-EXPOSE 9443 8443 12443 2222 8047 9995
+EXPOSE 8443 12443 2222 8047 3000
 
 # fix init-script
 RUN sed -i '/after cldb /a     sleep 30; echo mapr | maprlogin password -user mapr' /usr/bin/init-script
