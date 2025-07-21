@@ -1,6 +1,6 @@
 FROM maprtech/dev-sandbox-container:7.10.0_9.4.0_ubuntu20
 
-LABEL com.hpe.version="0.0.1"
+LABEL com.hpe.version="0.0.5"
 LABEL vendor=HPE
 
 ARG MAPR_REPO=https://package.ezmeral.hpe.com/releases/
@@ -27,14 +27,14 @@ RUN sed -i "s|http://dfaf.mip.storage.hpecorp.net/artifactory/list/prestage/rele
 RUN apt update && apt upgrade -y && apt install -y \
     mapr-nifi \
     mapr-drill \
-    mapr-spark \
-    mapr-spark-thriftserver \
-    mapr-grafana \
     mysql-server
-
+    # mapr-spark \
+    # mapr-spark-thriftserver \
+    # mapr-grafana \
+    
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 
-EXPOSE 8443 12443 2222 8047 3000
+EXPOSE 8443 12443 2222 3000 8047
 
 # fix init-script
 RUN sed -i '/after cldb /a     sleep 30; echo mapr | maprlogin password -user mapr' /usr/bin/init-script
@@ -52,6 +52,10 @@ COPY entrypoint.sh /
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 COPY pyproject.toml uv.lock .python-version /app/
 COPY users.py /app/
+COPY ingest_to_iceberg.py /app/
+COPY invoke-pyspark.sh /app/
+COPY create_iceberg_table.py /app/
+RUN uv sync && uv lock
 
 RUN wget -P /opt/mapr/spark/spark-3.5.5/jars https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.9.2/iceberg-spark-runtime-3.5_2.12-1.9.2.jar
 

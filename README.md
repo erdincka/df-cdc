@@ -57,15 +57,9 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
     - Click on empty space and select "Play" button to start all processors.
 
 
-- Open [Zeppelin](https://localhost:9995/) (replace `localhost` if not running locally)
+<!-- - Open Grafana to monitor changes -->
+<!-- TODO: configure dashboard connection and -->
 
-    - Login with `mapr/mapr`
-
-    - Import [the note](./HiveDashboard_2M333SR9V.zpln)
-
-    <!-- - Configure Interpreter - Hive -->
-
-    - Run paragraphs
 
 - Insert records to the pre-configured MySQL table `users`
 
@@ -73,9 +67,17 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
 - Check NiFi flow to see processed messages (it may take a while to process all records)
 
-- Query the resulting table from Zeppelin - re-run queries as new records are being processed
+<!-- - Query the resulting table from Zeppelin - re-run queries as new records are being processed -->
 
+- Query with Drill
 
+`/opt/mapr/drill/drill-1.21.2/bin/sqlline -u 'jdbc:drill:drillbit=mapr.demo:31010;auth=MAPRSASL'`
+
+and Run
+
+```sql
+select * from dfs.`/user/mapr/users/`;
+```
 
 ## Optional
 

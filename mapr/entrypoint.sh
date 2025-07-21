@@ -18,10 +18,6 @@ echo "[ $(date) ] Data Fabric configuring, this will take some time..."
 /usr/bin/init-script 2>&1 > /root/configure-$(date +%Y%m%d_%H%M%S).log
 echo "[ $(date) ] Data Fabric configuration is complete, preparing for demo..."
 
-# /opt/mapr/hive/hive-3.1.3/bin/schematool -dbType mysql -initSchema
-# /opt/mapr/hive/hive-3.1.3/bin/hive.sh restart
-# echo "[ $(date) ] Hive configured to use MySQL DB, waiting for startup...."
-
 # Obtain ticket for mapr user
 echo mapr | sudo -u mapr maprlogin password
 
@@ -34,8 +30,6 @@ if [ -n "${NIFI_WEB_PROXY_HOST}" ]; then
     echo "[ $(date) ] NiFi set up to use proxy $NIFI_WEB_PROXY_HOST"
 fi
 
-# Re-configure for HistoryServer
-# /opt/mapr/server/configure.sh -R -HS `hostname -f` 2>&1 > /root/configure-$(date +%Y%m%d_%H%M%S).log
 # Create demo table in MySQL
 echo """
 [client]
@@ -48,16 +42,14 @@ echo "[ $(date) ] MySQL demo table 'users' created."
 # Setup S3
 mkdir -p /root/.mc/certs/CAs/; cp /opt/mapr/conf/ca/chain-ca.pem /root/.mc/certs/CAs/
 AWS_CREDS=$(maprcli s3keys generate -domainname primary -accountname default -username mapr)
-access_key=$(echo "$AWS_CREDS" | grep -v accesskey | awk '{ print $1 }')
-secret_key=$(echo "$AWS_CREDS" | grep -v accesskey | awk '{ print $2 }')
+access_key=$(echo "$AWS_CREDS" | grep -v aws_access_key_id | awk '{ print $1 }')
+secret_key=$(echo "$AWS_CREDS" | grep -v aws_secret_access_key | awk '{ print $2 }')
 mkdir -p /home/mapr/.aws
 echo """
 [default]
-    accessKey = ${access_key}
-    secretKey = ${secret_key}
+aws_access_key_id = ${access_key}
+aws_secret_access_key = ${secret_key}
 """ > /home/mapr/.aws/credentials
-    # aws_access_key_id = ${access_key}
-    # aws_secret_access_key = ${secret_key}
 chown -R mapr:mapr /home/mapr/.aws/
 
 # Create bucket
@@ -65,18 +57,18 @@ chown -R mapr:mapr /home/mapr/.aws/
 /opt/mapr/bin/mc mb df/demobk
 /opt/mapr/bin/mc mb df/demobk/staging
 
-# Create Hive table for users
-# sleep 60; hive --service beeline -u "jdbc:hive2://`hostname -f`:10000/default;ssl=true;auth=maprsasl" -f /app/create-table.hiveql 2>&1 >> /root/hive-tablecreate.log
+# Create Iceberg table on S3 bucket
+/opt/mapr/spark/spark-3.5.5/bin/pyspark \
+  --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.2 < ./create_iceberg_table.py > /dev/null
 
 # Mount locally
 mount -t nfs -o nolock mapr:/mapr /mapr
 
 echo "[ $(date) ] CREDENTIALS:"
 # echo "Hive Credentials: hive/Admin123."
-echo "NiFi Credentials: ${NIFI_USER}/${NIFI_PASSWORD}"
-echo "Cluster Admin Credentials: mapr/mapr"
-echo "MySQL DB Credentials: root/Admin123."
-echo "S3 Credentials"
+echo "NiFi: ${NIFI_USER}/${NIFI_PASSWORD}"
+echo "Cluster Admin: mapr/mapr"
+echo "MySQL: root/Admin123."
 echo "S3 Access Key: ${access_key}"
 echo "S3 Secret Key: ${secret_key}"
 
