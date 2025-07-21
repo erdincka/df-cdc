@@ -18,7 +18,8 @@ services:
       - "8443:8443"  ## optional for MCS
       - "2222:22"  ## optional for SSH
       - "12443:12443" ## optional for NiFi
-      - "3000:3000" ## optional for Grafana
+      - "8047:8047" ## optional for Drill
+      # - "3000:3000" ## optional for Grafana
     cap_add:
       - SYS_ADMIN
     privileged: true

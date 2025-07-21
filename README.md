@@ -4,9 +4,9 @@ End to end data processing for change data capture, using HPE Data Fabric.
 
 Change Data Capture is a mechanism to grab the changes happening on a database and send it to another system. This demo shows how HPE Data Fabric can facilitate end to end data processing from MySQL database changes. We set up an RDBMS instance, create a `users` table and use NiFi flows to capture the changes on that table. Current version processes only **INSERT** statements, but can be easily modified to take action against other SQL operations.
 
-To use the demo, you can use provided [docker-compose.yaml](./docker-compose.yaml) file to start a MapR Sandbox instance automatically configured with all required core and EEP components (ie, NiFi, Hive, Zeppelin).
+To use the demo, you can use provided [docker-compose.yaml](./docker-compose.yaml) file to start a MapR Sandbox instance automatically configured with all required core and EEP components (ie, NiFi, Drill etc).
 
-You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to see changes reflected in real time.
+You can then open NiFi endpoint to enable/disable the flow, and use Drill to query the destination and see changes reflected in real time.
 
 ## TODO 
 
@@ -15,7 +15,7 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
 ## Requirements
 
-- Basic knowledge of Data Fabric, NiFi, Hive & Zeppelin - not necesarily needed though
+- Basic knowledge of Data Fabric, NiFi, Drill, SQL - not necesarily needed though
 
 - Docker, with min 8 cores & 30GB memory
 
@@ -57,11 +57,14 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
     - Run `uv run users.py`
 
-- Check NiFi flow to see processed messages (it may take a while to process all records)
+- Check NiFi flow to see processed flows & modified files written as JSON documents
 
-<!-- - Query the resulting table from Zeppelin - re-run queries as new records are being processed -->
+    - It will take few seconds to reflect the process on UI, but you should see files immediately
+    
+    - `ls /mapr/mapr.demo/user/mapr/users/`
 
-- Query with Drill
+
+- (Optional) Query JSON files with Drill
 
     `/opt/mapr/drill/drill-1.21.2/bin/sqlline -u 'jdbc:drill:drillbit=mapr.demo:31010;auth=MAPRSASL'`
 
@@ -70,6 +73,8 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
     ```sql
     select * from dfs.`/user/mapr/users/`;
     ```
+
+- Repeat last two steps side by side, so run `users.py` to send new records to MySQL, and run `select * from` query to see updated records immediately.
 
 # TODO
 

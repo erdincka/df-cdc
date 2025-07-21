@@ -34,7 +34,7 @@ RUN apt update && apt upgrade -y && apt install -y \
     
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 
-EXPOSE 8443 12443 2222 3000 8047
+EXPOSE 8443 2222 3000 12443 8047
 
 # fix init-script
 RUN sed -i '/after cldb /a     sleep 30; echo mapr | maprlogin password -user mapr' /usr/bin/init-script
@@ -55,7 +55,8 @@ COPY users.py /app/
 COPY ingest_to_iceberg.py /app/
 COPY invoke-pyspark.sh /app/
 COPY create_iceberg_table.py /app/
-RUN uv sync && uv lock
+RUN /root/.local/bin/uv sync
+# RUN /root/.local/bin/uv lock
 
 RUN wget -P /opt/mapr/spark/spark-3.5.5/jars https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.9.2/iceberg-spark-runtime-3.5_2.12-1.9.2.jar
 

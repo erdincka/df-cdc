@@ -42,24 +42,25 @@ echo "[ $(date) ] MySQL demo table 'users' created."
 # Setup S3
 mkdir -p /root/.mc/certs/CAs/; cp /opt/mapr/conf/ca/chain-ca.pem /root/.mc/certs/CAs/
 AWS_CREDS=$(maprcli s3keys generate -domainname primary -accountname default -username mapr)
-access_key=$(echo "$AWS_CREDS" | grep -v aws_access_key_id | awk '{ print $1 }')
-secret_key=$(echo "$AWS_CREDS" | grep -v aws_secret_access_key | awk '{ print $2 }')
+read -r access_key secret_key <<<$(echo "$AWS_CREDS" | grep -v accesskey)
 mkdir -p /home/mapr/.aws
 echo """
 [default]
 aws_access_key_id = ${access_key}
 aws_secret_access_key = ${secret_key}
+accessKey = ${access_key}
+secretKey = ${secret_key}
 """ > /home/mapr/.aws/credentials
 chown -R mapr:mapr /home/mapr/.aws/
 
 # Create bucket
 /opt/mapr/bin/mc alias set df https://mapr.demo:9000 $access_key $secret_key
 /opt/mapr/bin/mc mb df/demobk
-/opt/mapr/bin/mc mb df/demobk/staging
+# /opt/mapr/bin/mc mb df/demobk/staging
 
 # Create Iceberg table on S3 bucket
-/opt/mapr/spark/spark-3.5.5/bin/pyspark \
-  --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.2 < ./create_iceberg_table.py > /dev/null
+# /opt/mapr/spark/spark-3.5.5/bin/pyspark \
+#   --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.2 < ./create_iceberg_table.py > /dev/null
 
 # Mount locally
 mount -t nfs -o nolock mapr:/mapr /mapr
@@ -71,8 +72,6 @@ echo "Cluster Admin: mapr/mapr"
 echo "MySQL: root/Admin123."
 echo "S3 Access Key: ${access_key}"
 echo "S3 Secret Key: ${secret_key}"
-
-# TODO: Upload NiFi template via REST call
 
 echo "[ $(date) ] Ready!"
 sleep infinity # just in case, keep container running
