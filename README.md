@@ -38,27 +38,19 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 - Open [NiFi](https://localhost:12443/nifi) to configure passwords and enable controllers
     - Login with `admin/Admin123.Admin123.` (or use your credentials if you've changed in the `docker-compose.yaml` file).
 
-    - Drag "Process Group" from top of the page onto Canvas, browse to upload the [flow file: CDC MySQL to Hive Flow.json](./CDC%20MySQL%20to%20Hive%20Flow.json.json).
+    - Drag "Process Group" from top of the page onto Canvas, browse to upload the [flow file: CDC with HPE Data Fabric.json](./CDC%20with%20HPE%20Data%20Fabric.json).
 
         - Select the Process Group, and select [Settings](./images/NiFi_ControllerSettings.png) for "NiFi Flow".
     
             - In the "Controller Services" tab,
-    
-                - Enter mapr password `mapr` for [Hive3_EEP_ConnectionPool](./images/NiFi_HiveSettings.png) by clicking "gear" icon.
-    
+        
                 - Enable [all services](./images/NiFi_ControllerServices.png) by clicking the lightning icon and then "Enable".
     
             - Enter into "Process Group" by double-click.
     
         - Double-click on [CaptureChangeMySQL processor](./images/NiFi_CaptureChangeMySQL.png), enter [Password](./images/NiFi_MySQLPassword.png).
     
-        - S3 credentials should be available within the provided credentials file `/home/mapr/.aws/credentials`.
-    
     - Click on empty space and select "Play" button to start all processors.
-
-
-<!-- - Open Grafana to monitor changes -->
-<!-- TODO: configure dashboard connection and -->
 
 
 - Insert records to the pre-configured MySQL table `users`
@@ -71,31 +63,13 @@ You can then open NiFi endpoint to enable/disable the flow, and use Zeppelin to 
 
 - Query with Drill
 
-`/opt/mapr/drill/drill-1.21.2/bin/sqlline -u 'jdbc:drill:drillbit=mapr.demo:31010;auth=MAPRSASL'`
+    `/opt/mapr/drill/drill-1.21.2/bin/sqlline -u 'jdbc:drill:drillbit=mapr.demo:31010;auth=MAPRSASL'`
 
-and Run
+    then Run
 
-```sql
-select * from dfs.`/user/mapr/users/`;
-```
-
-## Optional
-
-- Create a connection to Hive table using Presto (within HPE PCAI platform)
-
-- Connect HPE PCAI Superset to the newly created data source (hive s3parquet endpoint)
-
-- Monitor Superset dashboard for changes in near realtime
-
-**Follow instructions in [Manual Installation](./MANUAL-INSTALL.md) for further details**
-
-
-## Manual Installation
-
-- You can follow the steps below to manually install the demo on your own Data Fabric instance
-
-[Open Manual Installation Instructions](./MANUAL-INSTALL.md)
-
+    ```sql
+    select * from dfs.`/user/mapr/users/`;
+    ```
 
 # TODO
 
