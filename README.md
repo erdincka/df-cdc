@@ -8,7 +8,7 @@ To use the demo, you can use provided [docker-compose.yaml](./docker-compose.yam
 
 You can then open NiFi endpoint to enable/disable the flow, and use Drill to query the destination and see changes reflected in real time.
 
-## TODO 
+## Basic Flow 
 
 ![Demo Flow](./images/CDC%20Demo.png)
 

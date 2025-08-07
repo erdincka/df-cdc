@@ -1,8 +1,5 @@
 FROM maprtech/dev-sandbox-container:7.10.0_9.4.0_ubuntu20
 
-LABEL com.hpe.version="0.0.5"
-LABEL vendor=HPE
-
 ARG MAPR_REPO=https://package.ezmeral.hpe.com/releases/
 ARG UBUNTU_VERSION=22.04
 ARG NIFI_VERSION=1.28.0

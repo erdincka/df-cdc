@@ -52,5 +52,6 @@ spark.sql(f"""
     )
     USING iceberg
 """)
+    # LOCATION 's3a://users/';
     # PARTITIONED BY (country)
 
